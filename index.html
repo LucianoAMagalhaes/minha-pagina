@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ===================================================================
+       EDITE AQUI — dados da LUMO. Estes são os únicos placeholders do
+       arquivo; o resto do texto está nas seções abaixo.
+
+       E-mail ......... contato@lumo.com.br
+       WhatsApp ....... 55DDDNUMERO  (só dígitos, com 55 na frente)
+       Domínio ........ https://lumo.com.br
+       =================================================================== -->
+
+  <title>LUMO — Software sob medida</title>
+  <meta name="description" content="A LUMO projeta e constrói software sob medida para empresas que precisam de sistemas próprios, bem feitos e fáceis de manter.">
+  <meta name="theme-color" content="#0f172a">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LUMO">
+  <meta property="og:title" content="LUMO — Software sob medida">
+  <meta property="og:description" content="Projetamos e construímos software sob medida para empresas que precisam de sistemas próprios, bem feitos e fáceis de manter.">
+  <meta property="og:url" content="https://lumo.com.br">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Marca JS ativo antes do primeiro paint, para o fade-in
+       não piscar e a página funcionar sem JS. -->
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="wordmark" href="#" aria-label="LUMO, início">LUMO</a>
+      <nav aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container hero-inner reveal">
+        <p class="eyebrow">Software sob medida</p>
+        <h1>Sistemas que a sua empresa não encontra pronto.</h1>
+        <p class="hero-subtitle">
+          A LUMO projeta e constrói software para empresas que já passaram do ponto
+          em que planilhas e ferramentas genéricas dão conta. Da arquitetura à
+          entrega, com código que a sua equipe consegue manter depois.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#contato">Falar com a gente</a>
+          <a class="btn btn-secondary" href="#servicos">Ver serviços</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SOBRE ============ -->
+    <section class="section" id="sobre">
+      <div class="container reveal">
+        <p class="section-label">01 — Sobre</p>
+        <h2>Sobre a LUMO</h2>
+
+        <div class="about-grid">
+          <div class="about-text">
+            <p>
+              Somos uma equipe de desenvolvimento que trabalha lado a lado com quem
+              contrata. Entramos no problema antes de falar de tecnologia: entender a
+              operação, achar onde o processo trava e só então decidir o que construir.
+            </p>
+            <p>
+              Trabalhamos em ciclos curtos, com entregas que vão para produção desde as
+              primeiras semanas. Nada de projeto que só aparece no fim — você acompanha
+              o que está sendo feito e corrige o rumo enquanto ainda é barato corrigir.
+            </p>
+            <p>
+              Entregamos o código, a documentação e o conhecimento. Se um dia a sua
+              equipe quiser tocar o sistema sem a gente, ela vai conseguir. É assim que
+              medimos se o trabalho ficou bom.
+            </p>
+
+            <h3 class="chips-title">Tecnologias</h3>
+            <ul class="chips" aria-label="Tecnologias que utilizamos">
+              <li>Python</li>
+              <li>TypeScript</li>
+              <li>React</li>
+              <li>Node.js</li>
+              <li>PostgreSQL</li>
+              <li>Docker</li>
+              <li>AWS</li>
+              <li>Terraform</li>
+            </ul>
+          </div>
+
+          <!-- EDITE AQUI: números reais da empresa -->
+          <div class="stats">
+            <div>
+              <span class="stat-value">8+</span>
+              <span class="stat-label">anos construindo software</span>
+            </div>
+            <div>
+              <span class="stat-value">40+</span>
+              <span class="stat-label">projetos entregues</span>
+            </div>
+            <div>
+              <span class="stat-value">12</span>
+              <span class="stat-label">clientes ativos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVIÇOS ============ -->
+    <section class="section" id="servicos">
+      <div class="container reveal">
+        <p class="section-label">02 — Serviços</p>
+        <h2>O que fazemos</h2>
+        <p class="section-intro">
+          Quatro frentes de trabalho. Na prática elas se misturam num mesmo projeto —
+          a divisão serve para você saber por onde começar a conversa.
+        </p>
+
+        <div class="services-grid" id="services-grid"></div>
+
+        <noscript>
+          <ul class="services-fallback">
+            <li><strong>Desenvolvimento sob medida</strong> — sistemas internos, portais e APIs construídos do zero para o seu processo.</li>
+            <li><strong>Modernização de sistemas</strong> — tirar do papel legado o que ainda funciona e migrar sem parar a operação.</li>
+            <li><strong>Integrações e automação</strong> — conectar ERPs, gateways e planilhas para acabar com o trabalho manual.</li>
+            <li><strong>Consultoria e arquitetura</strong> — apoio técnico para decidir o que construir, comprar ou descartar.</li>
+          </ul>
+        </noscript>
+      </div>
+    </section>
+
+    <!-- ============ CONTATO ============ -->
+    <section class="section section-contact" id="contato">
+      <div class="container reveal">
+        <p class="section-label">03 — Contato</p>
+        <h2>Vamos conversar sobre o seu projeto</h2>
+        <p class="section-intro">
+          Conte o problema que você está tentando resolver. A primeira conversa é sem
+          compromisso e costuma ser suficiente para dizermos se somos a equipe certa.
+        </p>
+
+        <div class="hero-actions contact-actions">
+          <a class="btn btn-primary" href="mailto:contato@lumo.com.br">contato@lumo.com.br</a>
+          <a class="btn btn-secondary" href="https://wa.me/55DDDNUMERO" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="year">2026</span> LUMO. Todos os direitos reservados.</p>
+      <p>CNPJ 00.000.000/0001-00</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

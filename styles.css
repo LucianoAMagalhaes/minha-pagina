@@ -1,0 +1,499 @@
+/* ============================================================
+   1. DESIGN TOKENS — mude o visual inteiro daqui
+   ============================================================ */
+:root {
+  /* Fundos em camadas, na família slate. Azul-acinzentado, nunca preto
+     puro: preto puro com texto claro cansa a vista. */
+  --bg:            #0f172a;
+  --surface:       #1e293b;
+  --surface-hover: #273449;
+
+  /* Texto. Branco levemente rebaixado, mesmo motivo. 16.3:1 sobre --bg. */
+  --text:       #f1f5f9;
+  --text-muted: #94a3b8;
+
+  /* Acento primário — índigo. É o que veste os botões, o brilho do hero,
+     o anel de foco e as bordas de destaque.
+     Por ser uma cor ESCURA, o texto em cima dela é branco (--accent-text):
+     4.47:1. Texto escuro sobre o índigo daria 4.0:1, pior.
+     O --accent-hover é mais escuro e leva o branco a 6.29:1. */
+  --accent:       #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft:  rgba(99, 102, 241, 0.16);
+  --accent-text:  #ffffff;
+
+  /* Acento secundário — esmeralda. Existe por contraste, não por enfeite:
+     o índigo sobre --bg dá só 4.0:1 e reprova em texto pequeno, então
+     tudo que é acento em TEXTO (eyebrow, rótulo de seção, números das
+     stats, ponto da marca) usa esta cor, que dá 7.04:1. */
+  --accent-2:     #10b981;
+
+  --border:       rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --radius:    14px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
+
+
+  --space-xs: 0.5rem;
+  --space-sm: 0.875rem;
+  --space-md: 1.5rem;
+  --space-lg: 3rem;
+  --space-xl: clamp(4rem, 10vw, 7rem);
+
+  --container: 1100px;
+  --header-h:  68px;
+
+  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   2. RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* impede que as âncoras parem embaixo do header fixo */
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, p, ul, figure { margin: 0; }
+ul { list-style: none; padding: 0; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+
+/* ============================================================
+   3. TIPOGRAFIA — fluida via clamp(), sem media query
+   ============================================================ */
+h1 {
+  font-size: clamp(2.5rem, 7vw, 4.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  text-wrap: balance;
+}
+
+h3 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.01em; }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.4em;
+}
+
+.eyebrow,
+.section-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  /* Acento secundário: texto de 13px precisa de 4.5:1 e o índigo não chega lá. */
+  color: var(--accent-2);
+  margin-bottom: var(--space-sm);
+}
+
+.section-intro {
+  color: var(--text-muted);
+  max-width: 60ch;
+  margin-bottom: var(--space-lg);
+}
+
+/* ============================================================
+   4. LAYOUT
+   ============================================================ */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 2rem);
+}
+
+.section { padding-block: var(--space-xl); }
+
+.section + .section { border-top: 1px solid var(--border); }
+
+/* Header fixo */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* min-height, não height: com zoom de texto alto o conteúdo estica o
+     header em vez de transbordar por baixo da borda. */
+  min-height: var(--header-h);
+  display: flex;
+  align-items: center;
+  /* mesmo valor de --bg, com alfa: o blur precisa de cor literal */
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: 0.14em;
+  color: var(--text);
+}
+
+/* O ponto aceso antes do nome é a marca inteira: LUMO = luz. */
+.wordmark::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 12px var(--accent-2);
+}
+
+.nav-list {
+  display: flex;
+  gap: var(--space-md);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.nav-list a { transition: color var(--transition); }
+.nav-list a:hover { color: var(--text); }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  padding: 0.75rem 1rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-radius: 0 0 var(--radius-sm) 0;
+}
+.skip-link:focus { left: 0; }
+
+/* ============================================================
+   5. HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  padding-block: clamp(5rem, 14vw, 9rem);
+  overflow: hidden;
+}
+
+/* O brilho radial é o que dá o ar "moderno" sem imagem nenhuma. */
+.hero-glow {
+  position: absolute;
+  inset: -40% 0 auto 0;
+  height: 720px;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 45%, var(--accent-soft), transparent 70%);
+}
+
+.hero-inner { position: relative; }
+
+.hero-subtitle {
+  margin-top: var(--space-md);
+  max-width: 55ch;
+  font-size: clamp(1.0625rem, 2vw, 1.25rem);
+  color: var(--text-muted);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+/* ============================================================
+   6. COMPONENTES
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: background var(--transition), border-color var(--transition),
+              transform var(--transition);
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-secondary {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.btn-secondary:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.chips li {
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+/* ============================================================
+   7. SOBRE
+   ============================================================ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.stats {
+  display: grid;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.stats div + div {
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border);
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--accent-2);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.about-text p + p { margin-top: var(--space-md); }
+.about-text p { color: var(--text-muted); }
+
+.chips-title {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+}
+
+/* ============================================================
+   8. SERVIÇOS — responsivo sem nenhuma media query
+   ============================================================ */
+/* O min() é o que impede o card de estourar em tela estreita: sem ele a
+   trilha tem piso fixo de 280px e, quando o contêiner mede menos que isso
+   (320px de viewport com barra de rolagem clássica, ou zoom de 400%), o
+   card vaza para fora e o overflow-x do body corta a borda em silêncio.
+   Com min(), a trilha encolhe junto com o contêiner. */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: var(--space-md);
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: border-color var(--transition), background var(--transition),
+              transform var(--transition), box-shadow var(--transition);
+}
+
+/* Sem translate/sombra no hover: o card não é clicável, então não deve
+   se comportar como se fosse. Só um realce discreto da borda. */
+.service-card:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+}
+
+.service-card.is-featured {
+  border-color: var(--border-strong);
+  background: linear-gradient(160deg, var(--accent-soft), var(--surface) 55%);
+}
+
+.service-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.service-title { font-size: 1.0625rem; }
+
+.service-desc {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  flex-grow: 1;
+}
+
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: auto;
+  padding-top: var(--space-xs);
+}
+
+.service-tags li {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+.services-fallback {
+  display: grid;
+  gap: var(--space-sm);
+  color: var(--text-muted);
+}
+
+.services-fallback strong { color: var(--text); }
+
+/* ============================================================
+   9. CONTATO + RODAPÉ
+   ============================================================ */
+.section-contact { text-align: center; }
+.section-contact .section-intro { margin-inline: auto; }
+.contact-actions { justify-content: center; }
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding-block: var(--space-md);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ============================================================
+   10. ANIMAÇÃO DE ENTRADA (ativada pelo JS)
+   ============================================================ */
+/* Só esconde se o JS estiver ativo — sem JS, tudo aparece normalmente.
+   A classe .js é adicionada no <head>, antes do primeiro paint. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   11. ACESSIBILIDADE
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   12. MOBILE — a única media query de layout
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Os links continuam no header, só mais apertados: os três cabem em
+     ~170px, que somados ao wordmark dão 242px dos 280px úteis a 320px.
+     Escondê-los aqui tirava a navegação inteira do celular e ainda
+     deixava o <nav> como landmark vazio no leitor de tela. */
+  .nav-list {
+    gap: var(--space-sm);
+    font-size: 0.875rem;
+  }
+
+  /* A 14px a caixa do link tem ~23px de altura, abaixo do mínimo de alvo
+     de toque. Os 44px cabem dentro do header sem esticá-lo. */
+  .nav-list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .about-grid { grid-template-columns: 1fr; }
+
+  .footer-inner { justify-content: center; text-align: center; }
+}
