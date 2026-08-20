@@ -438,6 +438,14 @@ code {
   justify-content: space-between;
 }
 
+.footer-credit a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color var(--transition);
+}
+
+.footer-credit a:hover { color: var(--text); }
+
 /* ============================================================
    10. ANIMAÇÃO DE ENTRADA (ativada pelo JS)
    ============================================================ */
