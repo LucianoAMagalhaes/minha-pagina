@@ -468,6 +468,17 @@ code {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* O anel de foco acompanha o border-radius do próprio elemento, então o
+   raio precisa ficar FORA da regra genérica acima: ela tem a mesma
+   especificidade de .btn e vem depois na cascata, ou seja, achatava o
+   botão pílula num retângulo de 8px assim que ele recebia foco de
+   teclado. Aqui o raio vai só nos links de texto, que não têm raio
+   próprio; .btn e .skip-link mantêm o deles. */
+.wordmark:focus-visible,
+.nav-list a:focus-visible,
+.footer-credit a:focus-visible {
   border-radius: var(--radius-sm);
 }
 

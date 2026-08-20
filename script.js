@@ -82,6 +82,9 @@ function renderServices(list, container) {
     if (Array.isArray(service.tags) && service.tags.length > 0) {
       const tagList = document.createElement("ul");
       tagList.className = "service-tags";
+      // list-style: none tira o papel de lista no Safari/VoiceOver;
+      // role="list" devolve a semântica. Mesmo motivo das listas do HTML.
+      tagList.setAttribute("role", "list");
       for (const tag of service.tags) {
         const item = document.createElement("li");
         item.textContent = tag;
