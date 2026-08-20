@@ -128,6 +128,81 @@ function setupReveal() {
   elements.forEach((el) => observer.observe(el));
 }
 
+/* ============================================================
+   TEMA CLARO / ESCURO
+   ============================================================ */
+const THEME_KEY = "lumo-theme";
+
+function currentTheme() {
+  return document.documentElement.getAttribute("data-theme") === "light"
+    ? "light"
+    : "dark";
+}
+
+/**
+ * Aplica um tema e acerta o que depende dele fora do CSS.
+ *
+ * Quem escolhe o tema inicial é o script inline do <head>, antes do
+ * primeiro paint; esta função existe para o clique e para manter o
+ * rótulo do botão e a cor da barra do navegador em dia.
+ *
+ * A cor da barra sai do --bg já computado, e não de uma constante aqui:
+ * assim a lista de cores continua existindo em um lugar só, o :root.
+ */
+function applyTheme(theme, button) {
+  const root = document.documentElement;
+  root.setAttribute("data-theme", theme);
+
+  // O rótulo descreve a ação, não o estado: é o que o leitor de tela
+  // anuncia e o que o ícone visível (sol ou lua) está mostrando.
+  const label = theme === "light" ? "Ativar modo escuro" : "Ativar modo claro";
+  if (button) {
+    button.setAttribute("aria-label", label);
+    button.setAttribute("title", label);
+  }
+
+  const meta = document.querySelector('meta[name="theme-color"]');
+  const bg = getComputedStyle(root).getPropertyValue("--bg").trim();
+  if (meta && bg) meta.setAttribute("content", bg);
+}
+
+function setupThemeToggle() {
+  const button = document.getElementById("theme-toggle");
+  if (!button) return;
+
+  applyTheme(currentTheme(), button);
+
+  button.addEventListener("click", () => {
+    const next = currentTheme() === "light" ? "dark" : "light";
+    applyTheme(next, button);
+    // Pode lançar em file:// ou com armazenamento bloqueado. O tema da
+    // sessão atual continua valendo; só não sobrevive ao reload.
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch (e) {
+      /* sem persistência, e tudo bem */
+    }
+  });
+
+  // Enquanto o usuário não escolher um tema, acompanhamos o sistema —
+  // inclusive se ele virar sozinho no meio da sessão (modo automático).
+  const query = window.matchMedia("(prefers-color-scheme: light)");
+  const onSystemChange = (event) => {
+    let saved = null;
+    try {
+      saved = localStorage.getItem(THEME_KEY);
+    } catch (e) {
+      /* idem */
+    }
+    if (saved === "light" || saved === "dark") return;
+    applyTheme(event.matches ? "light" : "dark", button);
+  };
+
+  if (typeof query.addEventListener === "function") {
+    query.addEventListener("change", onSystemChange);
+  }
+}
+
 function setCurrentYear() {
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
@@ -135,4 +210,5 @@ function setCurrentYear() {
 
 renderServices(services, document.getElementById("services-grid"));
 setupReveal();
+setupThemeToggle();
 setCurrentYear();
