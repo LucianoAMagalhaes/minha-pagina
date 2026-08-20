@@ -5,7 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 Institutional landing page for **LUMO**, a software company. Single page, Portuguese
-(`pt-BR`), dark theme. Four sections: hero, `#sobre`, `#servicos`, `#contato`.
+(`pt-BR`), dark theme with a light theme behind a header toggle. Four sections: hero,
+`#sobre`, `#servicos`, `#contato`.
 
 ## No build system — this is deliberate
 
@@ -43,8 +44,16 @@ This is the single most likely thing to get wrong in this repo.
 
 **`styles.css` `:root` is the whole design system.** Every color, radius, spacing step
 and transition is a custom property. Restyling happens there, not in individual rules.
+`:root` is the *dark* theme and the base; `:root[data-theme="light"]` redefines only
+tokens. No component rule knows which theme is active, and that is the point — a new
+color must be a token defined in **both** blocks, or light silently inherits the dark
+value. Two colors are literal on purpose and have their own tokens because a literal
+was unavoidable: `--header-bg` (the sticky header's blur needs a real color, not a
+`var()` with alpha) and `--surface-subtle`.
 There are exactly two media queries: one at 720px for layout, one for
-`prefers-reduced-motion`. The project grid is responsive via
+`prefers-reduced-motion`. The theme deliberately does *not* add a third — the system
+preference is resolved in the `<head>` script, so the CSS never needs
+`prefers-color-scheme`. The project grid is responsive via
 `repeat(auto-fit, minmax(min(280px, 100%), 1fr))` with no media query at all. The
 `min()` is load-bearing: a bare `minmax(280px, …)` gives the track a hard floor and
 the cards overflow once the container is narrower than that (320px viewport with a
@@ -72,11 +81,26 @@ keyboard focus or present as clickable. The hover state is a subtle border chang
 — no lift, no shadow, no arrow icon. Don't "improve" this into a link without a real
 destination.
 
-**The `.js` class handshake.** An inline script in `<head>` adds `class="js"` to
-`<html>` before first paint. `styles.css` hides `.reveal` elements *only* under `.js`,
-so the scroll fade-in works with JS and the content is simply visible without it.
-Moving that script to the end of `<body>` or into `script.js` causes a
-flash-then-hide. The reveal also short-circuits under `prefers-reduced-motion`.
+**The `<head>` script does two pre-paint jobs, and both break if it moves.** It adds
+`class="js"` to `<html>`, and it resolves the theme (stored choice > system preference)
+into `data-theme`. `styles.css` hides `.reveal` elements *only* under `.js`, so the
+scroll fade-in works with JS and the content is simply visible without it; moving the
+script to the end of `<body>` or into `script.js` causes a flash-then-hide, and makes
+the page paint the wrong theme and correct itself in front of the user. The reveal also
+short-circuits under `prefers-reduced-motion`.
+
+**The theme toggle is JS-only, by design.** `.theme-toggle` is `display: none` until
+`.js` is present — without JS it would be a button that does nothing, and dark is the
+base theme anyway. `script.js` owns only the click, the persistence (`lumo-theme` in
+`localStorage`, every access wrapped in `try`, since it throws on `file://` and with
+storage blocked) and `<meta name="theme-color">`, which it reads from the computed
+`--bg` rather than from a second list of hex values. The button's label states the
+*action* ("Ativar modo claro"), matching the one icon CSS leaves visible.
+
+**Both accent invariants apply per theme, with different numbers.** In light,
+`--accent-2` cannot stay emerald `#10b981` — it drops to 2.42:1 and fails at any size,
+so it becomes `#047857` (5.24:1); and `--accent` goes to `#4f46e5`, taking white on it
+from 4.47:1 to 6.29:1. Changing a brand color means redoing the arithmetic twice.
 
 ## Verification
 

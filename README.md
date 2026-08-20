@@ -18,7 +18,7 @@ sem `npm install`. Abre com duplo clique e publica em qualquer host estático.
 | Textos do hero e do "Sobre" | `index.html`, nas seções `#hero` e `#sobre` |
 | Números da empresa | `index.html`, bloco `.stats` na seção `#sobre` |
 | Lista de serviços | `script.js` — array `services` no topo |
-| Cores, fontes, espaçamentos | `styles.css` — bloco `:root` no topo |
+| Cores, fontes, espaçamentos | `styles.css` — blocos `:root` (escuro) e `:root[data-theme="light"]` |
 | CNPJ | `index.html`, no rodapé |
 
 ### Placeholders que precisam virar dados reais
@@ -47,6 +47,21 @@ Acrescente um objeto ao array `services` em `script.js`:
 Atualize também a lista dentro do `<noscript>` no `index.html` — é o que aparece
 para quem navega sem JavaScript.
 
+### Tema claro / escuro
+
+O botão no header alterna os dois temas. A escolha fica no `localStorage`
+(chave `lumo-theme`); enquanto o visitante não escolher, vale a preferência do
+sistema operacional dele.
+
+O tema escuro é a base: mora no `:root` e é o que aparece sem JavaScript. O claro
+é o bloco `:root[data-theme="light"]`, que **só redefine tokens** — nenhuma regra
+de componente sabe qual tema está ativo. Se você criar um token de cor, defina-o
+nos dois blocos, senão o tema claro herda a cor do escuro.
+
+Quem escolhe o tema inicial é o script inline no `<head>`, antes do primeiro
+paint — é o que impede a página de abrir no tema errado e se corrigir na frente
+do visitante. Não mova esse script para o fim do `<body>` nem para o `script.js`.
+
 ### Trocar a cor da marca
 
 No `:root` do `styles.css`:
@@ -70,6 +85,12 @@ São dois acentos porque eles têm trabalhos diferentes:
   números das stats, ponto da marca). O índigo sobre `--bg` dá só 4.0:1 e reprova
   no mínimo de 4.5:1 para texto pequeno; o esmeralda dá 7.04:1. Se você mudar esta
   linha, verifique o contraste contra `--bg` com uma conta, não no olho.
+
+No tema claro os dois acentos mudam de valor pelo mesmo motivo, invertido: o
+esmeralda `#10b981` dá 2.42:1 sobre fundo claro e reprova, então vira `#047857`
+(5.24:1); e o `--accent` fica mais fundo, `#4f46e5`, o que leva o branco em cima
+dele de 4.47:1 para 6.29:1. Mudou a cor da marca? Refaça as duas contas, uma para
+cada tema.
 
 ## Rodar local
 
@@ -97,6 +118,9 @@ Não há build: é só conteúdo estático.
   respeito a `prefers-reduced-motion` e contraste verificado: texto principal em
   16.3:1, texto secundário em 6.96:1, acentos em texto (esmeralda) em 7.04:1 e o
   branco sobre o botão índigo em 4.47:1 — este último a 0,03 do mínimo de 4.5:1.
+- **Tema claro/escuro:** botão no header, com a escolha guardada no navegador e
+  a preferência do sistema como padrão. Contraste verificado nos dois temas.
 - **Sem JavaScript:** a página continua inteira; a lista de serviços vem de um
-  `<noscript>` em texto.
+  `<noscript>` em texto e o botão de tema — que sem JS não faria nada — some,
+  ficando o tema escuro.
 - **Fonte:** Inter via Google Fonts, com fallback para as fontes do sistema.

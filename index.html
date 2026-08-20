@@ -29,9 +29,35 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Marca JS ativo antes do primeiro paint, para o fade-in
-       não piscar e a página funcionar sem JS. -->
-  <script>document.documentElement.classList.add("js");</script>
+  <!-- Roda antes do primeiro paint e faz duas coisas:
+
+       1. marca JS ativo, para o fade-in não piscar e a página
+          funcionar sem JS;
+       2. resolve o tema (escolha salva > preferência do sistema) e
+          escreve data-theme, para a página não abrir no tema errado
+          e se corrigir na frente do usuário.
+
+       Precisa continuar aqui no <head>, e inline: no fim do <body>
+       ou dentro do script.js, os dois efeitos já chegam tarde.
+       localStorage pode lançar (file://, cookies bloqueados), daí o try. -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add("js");
+
+      var theme = null;
+      try { theme = localStorage.getItem("lumo-theme"); } catch (e) {}
+
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches
+            ? "light"
+            : "dark";
+      }
+
+      root.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -40,12 +66,28 @@
     <div class="container header-inner">
       <a class="wordmark" href="#" aria-label="LUMO, início">LUMO</a>
       <nav aria-label="Navegação principal">
-        <ul class="nav-list">
+        <ul class="nav-list" role="list">
           <li><a href="#sobre">Sobre</a></li>
           <li><a href="#servicos">Serviços</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
       </nav>
+
+      <!-- O rótulo diz o que o clique FAZ, não o tema atual, e o
+           script.js o mantém em dia junto com o ícone visível. -->
+      <button class="theme-toggle" type="button" id="theme-toggle"
+              aria-label="Ativar modo claro" title="Ativar modo claro">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true" focusable="false">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"></path>
+        </svg>
+      </button>
     </div>
   </header>
 
@@ -95,7 +137,7 @@
             </p>
 
             <h3 class="chips-title">Tecnologias</h3>
-            <ul class="chips" aria-label="Tecnologias que utilizamos">
+            <ul class="chips" role="list" aria-label="Tecnologias que utilizamos">
               <li>Python</li>
               <li>TypeScript</li>
               <li>React</li>
@@ -139,7 +181,7 @@
         <div class="services-grid" id="services-grid"></div>
 
         <noscript>
-          <ul class="services-fallback">
+          <ul class="services-fallback" role="list">
             <li><strong>Desenvolvimento sob medida</strong> — sistemas internos, portais e APIs construídos do zero para o seu processo.</li>
             <li><strong>Modernização de sistemas</strong> — tirar do papel legado o que ainda funciona e migrar sem parar a operação.</li>
             <li><strong>Integrações e automação</strong> — conectar ERPs, gateways e planilhas para acabar com o trabalho manual.</li>

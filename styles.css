@@ -1,7 +1,14 @@
 /* ============================================================
    1. DESIGN TOKENS — mude o visual inteiro daqui
+
+   São dois temas. O :root abaixo é o ESCURO e é a base: é o que vale
+   sem JavaScript e o que o restante do arquivo assume. O claro, mais
+   abaixo, só redefine tokens — nenhuma regra de componente conhece o
+   tema. Se você criar um token novo, defina-o nos dois lugares.
    ============================================================ */
 :root {
+  color-scheme: dark;
+
   /* Fundos em camadas, na família slate. Azul-acinzentado, nunca preto
      puro: preto puro com texto claro cansa a vista. */
   --bg:            #0f172a;
@@ -31,6 +38,15 @@
   --border:       rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
 
+  /* Fundo do header: mesma cor de --bg com alfa, porque o backdrop-filter
+     precisa de cor literal e não aceita transparência sobre var(). */
+  --header-bg: rgba(15, 23, 42, 0.72);
+  /* Realce fraquíssimo sobre --surface, usado nas tags dos serviços. */
+  --surface-subtle: rgba(255, 255, 255, 0.04);
+  /* O ponto da marca "acende" no escuro. No claro, o mesmo box-shadow
+     viraria um borrão escuro, então lá ele é um halo discreto. */
+  --wordmark-glow: 0 0 12px var(--accent-2);
+
   --radius:    14px;
   --radius-sm: 8px;
   --radius-pill: 999px;
@@ -50,6 +66,49 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ------------------------------------------------------------
+   TEMA CLARO
+
+   Ativado pelo atributo data-theme no <html>, escrito pelo script
+   inline do <head> antes do primeiro paint. Sem JS não existe tema
+   claro — o escuro continua sendo a base.
+
+   As duas invariantes de contraste do escuro valem aqui invertidas:
+
+   --accent (fundo de botão) segue ESCURO, então o texto em cima
+   continua branco; trocamos o índigo por um tom mais fundo, que leva
+   o branco de 4,47:1 para 6,29:1.
+
+   --accent-2 (cor de TEXTO) precisava mudar de verdade: o esmeralda
+   #10b981 dá 7,04:1 sobre o fundo escuro mas só 2,42:1 sobre o claro,
+   o que reprova em qualquer tamanho. O esmeralda escuro daqui dá
+   5,24:1 sobre --bg e 5,48:1 sobre --surface.
+   ------------------------------------------------------------ */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg:            #f8fafc;
+  --surface:       #ffffff;
+  --surface-hover: #f1f5f9;
+
+  --text:       #0f172a;  /* 17,1:1 sobre --bg */
+  --text-muted: #475569;  /* 7,24:1 sobre --bg */
+
+  --accent:       #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft:  rgba(99, 102, 241, 0.14);
+  --accent-text:  #ffffff;
+
+  --accent-2:     #047857;
+
+  --border:        rgba(15, 23, 42, 0.10);
+  --border-strong: rgba(15, 23, 42, 0.18);
+
+  --header-bg:      rgba(248, 250, 252, 0.72);
+  --surface-subtle: rgba(15, 23, 42, 0.04);
+  --wordmark-glow:  0 0 0 3px rgba(4, 120, 87, 0.14);
 }
 
 /* ============================================================
@@ -152,8 +211,7 @@ code {
   min-height: var(--header-h);
   display: flex;
   align-items: center;
-  /* mesmo valor de --bg, com alfa: o blur precisa de cor literal */
-  background: rgba(15, 23, 42, 0.72);
+  background: var(--header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -163,6 +221,7 @@ code {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-sm);
 }
 
 .wordmark {
@@ -182,11 +241,15 @@ code {
   height: 10px;
   border-radius: 50%;
   background: var(--accent-2);
-  box-shadow: 0 0 12px var(--accent-2);
+  box-shadow: var(--wordmark-glow);
 }
 
 .nav-list {
   display: flex;
+  /* A 320px a marca, os três links e o botão de tema somam mais que os
+     280px úteis. Quebrar linha estica o header (que é min-height) em vez
+     de vazar por baixo da borda. */
+  flex-wrap: wrap;
   gap: var(--space-md);
   font-size: 0.9375rem;
   color: var(--text-muted);
@@ -194,6 +257,45 @@ code {
 
 .nav-list a { transition: color var(--transition); }
 .nav-list a:hover { color: var(--text); }
+
+/* Botão de tema. Sem JS ele não faria nada, então nem aparece — mesmo
+   handshake .js usado pelo fade-in das seções. */
+.theme-toggle { display: none; }
+
+.js .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 44px: alvo de toque mínimo. Cabe nos 68px do header. */
+  width: 44px;
+  height: 44px;
+  flex: none;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition),
+              border-color var(--transition);
+}
+
+.js .theme-toggle:hover {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Os dois ícones ficam no HTML; o CSS mostra o do tema que o clique vai
+   ativar. Assim o rótulo do botão e o desenho contam a mesma história. */
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
 
 .skip-link {
   position: absolute;
@@ -404,7 +506,7 @@ code {
   color: var(--text-muted);
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-subtle);
   border: 1px solid var(--border);
 }
 
@@ -468,6 +570,17 @@ code {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* O anel de foco acompanha o border-radius do próprio elemento, então o
+   raio precisa ficar FORA da regra genérica acima: ela tem a mesma
+   especificidade de .btn e vem depois na cascata, ou seja, achatava o
+   botão pílula num retângulo de 8px assim que ele recebia foco de
+   teclado. Aqui o raio vai só nos links de texto, que não têm raio
+   próprio; .btn e .skip-link mantêm o deles. */
+.wordmark:focus-visible,
+.nav-list a:focus-visible,
+.footer-credit a:focus-visible {
   border-radius: var(--radius-sm);
 }
 
